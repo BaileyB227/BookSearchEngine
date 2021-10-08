@@ -15,6 +15,9 @@ const server = new ApolloServer({
   context: authMiddleware
 });
 
+server.applyMiddleware({ app });
+
+await apolloServer.start();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -29,7 +32,6 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/booksearch", {
   useFindAndModify: false
 });
 
-server.applyMiddleware({ app });
 
 app.use(routes);
 
