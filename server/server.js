@@ -1,7 +1,6 @@
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const { authMiddleware } = require('./utils/auth');
-const mongoose = require("mongoose");
 const path = require('path');
 const db = require('./config/connection');
 const routes = require('./routes');
@@ -17,14 +16,9 @@ const server = new ApolloServer({
   context: authMiddleware
 })
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/booksearch", {
-  useNewUrlParser: true,
-  useFindAndModify: false
-});
-
 server.applyMiddleware({app});
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'production') {
@@ -35,10 +29,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
-
-
 app.use(routes);
-
 
 db.once('open', () => {
   app.listen(PORT, () => {
